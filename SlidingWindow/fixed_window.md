@@ -25,7 +25,6 @@ public:
         return res;
     }
 };
-
 ```
 
 2. [First negative integer in every window of size k](https://practice.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k3345/1)
@@ -308,5 +307,69 @@ public:
         }
         return res;
     }
+};
+```
+
+9. [sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/)
+
+**Approach**: We use doubly ended queue(deque) so that we can push and pop from both ends. We first check if the current element is greater than q.back and while it is true we pop from back. We also push the current element.
+
+Once sliding window is of length k we push_back q.front to the output vector and check whether the ith element is q.front() and if so we pop that.
+
+```
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+
+    int j = 0 , i = 0 ;
+    deque<int> q ;
+    vector<int> ans ;
+
+    while(j < nums.size()){
+        if(!q.empty() && nums[j] > q.back()){
+            while(!q.empty() && nums[j] > q.back()){
+                q.pop_back() ;
+            }
+        }
+        q.push_back(nums[j]) ;
+
+        if(j - i + 1 < k){
+            j++ ;
+        }else if(j - i + 1 == k){
+            ans.push_back(q.front()) ;
+            if(q.front() == nums[i]){
+                q.pop_front() ;
+            }
+            i++ ;
+            j++ ;
+        }
+    }
+
+    return ans ;
+   }
+```
+
+10. [Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold](https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/)
+
+```
+class Solution {
+public:
+    int numOfSubarrays(vector<int>& arr, int k, int threshold) {
+        int j = 0, i = 0 , sum = 0;
+        int n = arr.size() , cnt = 0;
+
+        while(j < n){
+            sum += arr[j] ;
+            if(j - i + 1 < k){
+                j++ ;
+            }else if(j - i + 1 == k){
+                if(sum >= threshold*k ){
+                    cnt++ ;
+                }
+                sum -= arr[i] ;
+                i++ ;
+                j++;
+            }
+        }
+        return cnt ;
+}
 };
 ```
