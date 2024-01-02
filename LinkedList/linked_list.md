@@ -155,7 +155,32 @@ public:
 
 4. [Palindrome Linked List](https://leetcode.com/problems/palindrome-linked-list/)
 
-**Explanation**:-
+**Method 1**
+
+```
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        vector<int> arr;
+        while(head){
+            int x = head->val;
+            arr.push_back(x);
+            head = head->next;
+        }
+        int i=0,j=arr.size()-1;
+        while(i <= j){
+            if(arr[i] != arr[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+};
+```
+
+**Method 2 Explanation**:-
 
 -   First we will get the mid so, that we can divide a linked list into two.
 -   After that, we will reverse the half of the linked list
@@ -190,11 +215,194 @@ public:
             slow = slow->next;
         }
         slow = reverse(slow);
-        while(slow != NULL && (slow->val == head->val)){
-            head = head->next;
-            slow = slow->next;
+        ListNode* i = head;
+        ListNode* j = slow;
+        while(j){
+            if(i->val != j->val) return false;
+            i = i->next;
+            j = j->next;
         }
-        return slow == NULL;
+        return true;
     }
 };
+```
+
+5. [Delete Node](https://leetcode.com/problems/delete-node-in-a-linked-list/)
+
+```
+
+class Solution {
+public:
+    void deleteNode(ListNode* node) {
+        ListNode* nextNode = node->next;
+        node->val = nextNode->val;
+        node->next = nextNode->next;
+    }
+};
+```
+
+6. [Merge 2 sorted Linked lists](https://leetcode.com/problems/merge-two-sorted-lists/)
+
+```
+class Solution {
+public:
+    // Iteratively
+    ListNode* mergeTwoLists1(ListNode* l1, ListNode* l2) {
+        ListNode* dummy = new ListNode(0);
+        ListNode* cur = dummy;
+        while (l1 && l2) {
+            if (l1->val < l2->val) {
+                cur->next = l1;
+                l1 = l1->next;
+            } else {
+                cur->next = l2;
+                l2 = l2->next;
+            }
+            cur = cur->next;
+        }
+        cur->next = l1 ? l1 : l2;
+        return dummy->next;
+    }
+
+    // Recursively
+    ListNode* mergeTwoLists2(ListNode* l1, ListNode* l2) {
+        if (!l1 || !l2) {
+            return l1 ? l1 : l2;
+        }
+        if (l1->val < l2->val) {
+            l1->next = mergeTwoLists2(l1->next, l2);
+            return l1;
+        } else {
+            l2->next = mergeTwoLists2(l1, l2->next);
+            return l2;
+        }
+    }
+
+    // In-place, iteratively
+    ListNode* mergeTwoLists3(ListNode* l1, ListNode* l2) {
+        if (!l1 || !l2) {
+            return l1 ? l1 : l2;
+        }
+        ListNode* dummy = new ListNode(0);
+        dummy->next = l1;
+        ListNode* cur = dummy;
+        while (l1 && l2) {
+            if (l1->val < l2->val) {
+                l1 = l1->next;
+            } else {
+                ListNode* nxt = cur->next;
+                cur->next = l2;
+                ListNode* tmp = l2->next;
+                l2->next = nxt;
+                l2 = tmp;
+            }
+            cur = cur->next;
+        }
+        cur->next = l1 ? l1 : l2;
+        return dummy->next;
+    }
+};
+
+```
+
+7. [Intersection of Two Linked Lists](https://leetcode.com/problems/intersection-of-two-linked-lists/description/)
+
+**Explanation**:-
+
+-   Take 2 pointer's: pointer A walks through List A and List B (since once it hits null, it goes to List B's head).
+
+-   Pointer B also walks through List B and List A.
+
+-   Regardless of the length of the two lists, the sum of the lengths are the same (i.e. a+b = b+a), which means that the pointers sync up at the point of intersection.
+
+-   If the lists never intersected, it's fine too, because they'll sync up at the end of each list, both of which are null.
+
+```
+ class Solution {
+     ListNode getIntersectionNode(ListNode* headA, ListNode* headB) {
+        ListNode* a = headA;
+        ListNode* b = headB;
+
+        while(a != b){
+            a = a == nullptr ? headB : a.next;
+            b = b == nullptr ? headA : b.next;
+        }
+        return b;
+    }
+}
+
+```
+
+8. [Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/)
+
+**APPROACH** :
+
+-   The idea is to split the linked list into 2 : one containing all odd nodes and other containing all even nodes. And finally, attach the even node linked list at the end of the odd node linked list.
+-   To split the linked list into even nodes & odd nodes, we traverse the linked list and keep connecting the consecutive odd nodes and even nodes (to maintain the order of nodes) and save the pointer to the first even node.
+-   Finally, we insert all the even nodes at the end of the odd node list.
+
+```
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+
+        if (!head || !head->next) {
+            return head;
+        }
+
+        ListNode* odd = head;
+        ListNode* even = head->next;
+        ListNode* evenHead = even;
+
+        while (even && even->next) {
+            odd->next = even->next; //Connect all odds
+            even->next = odd->next->next;  //Connect all evens
+            odd = odd->next;
+            even = even->next;
+        }
+
+        odd->next = evenHead;
+
+        return head;
+    }
+};
+
+```
+
+9. [Swapping Nodes in a Linked List](https://leetcode.com/problems/swapping-nodes-in-a-linked-list)
+
+```
+    ListNode* curr = head;
+        for(int i=0; i<k-1; ++i){
+            curr = curr->next;
+        }
+        ListNode* left = curr;
+        ListNode* right = head;
+        while(curr->next){
+            curr = curr->next;
+            right = right->next;
+        }
+        swap(left->val, right->val);
+        return head;
+```
+
+```
+ListNode* swapNodes(ListNode* head, int k) {
+        ListNode* curr = head;
+        ListNode* left = head;
+        ListNode* right = head;
+        int counter = 1;
+        while(curr!=NULL){
+            if (counter<k){
+                left = left->next;
+            }
+            if (counter>k){
+                right = right->next;
+            }
+            curr = curr->next;
+            counter++;
+        }
+        swap(left->val, right->val);
+        return head;
+    }
 ```
