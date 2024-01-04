@@ -406,3 +406,137 @@ ListNode* swapNodes(ListNode* head, int k) {
         return head;
     }
 ```
+
+10. [Remove Duplicates from Sorted List](https://leetcode.com/problems/remove-duplicates-from-sorted-list/)
+
+```
+
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        ListNode* curr = head;
+        while(curr && curr->next){
+            if(curr->val == curr->next->val){
+                curr->next = curr->next->next;
+            }
+            else curr = curr->next;
+        }
+        return head;
+    }
+};
+```
+
+11. [Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+
+**Method 1 Single Pointer**
+
+```
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* curr = head;
+        int sz=0;
+        while(curr){
+            sz++;
+            curr = curr->next;
+        }
+        if(sz == n) return head->next;
+        ListNode* cur = head;
+        int cnt=1;
+        while(cur && cnt < sz-n){
+            cnt++;
+            cur = cur->next;
+        }
+        cur->next = cur->next->next;
+        return head;
+
+    }
+};
+```
+
+**Method 2 Two Pointer**
+
+```
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* fast = head;
+        while(n--){
+            fast = fast->next;
+        }
+         // if fast is already null, it means we have to delete head itself. So, just return next of head
+        if(!fast) return head -> next;
+        ListNode* slow = head;
+
+        while(fast && fast->next){
+            slow = slow->next;
+            fast = fast->next;
+        }
+        slow->next = slow->next->next;
+        return head;
+
+    }
+};
+```
+
+12. [Add Two Numbers](https://leetcode.com/problems/add-two-numbers/)
+    **Method 1 Not valid for larger numbers > long long**
+
+```
+class Solution {
+public:
+    ListNode* reverseList(ListNode *head, ListNode *prev = NULL) {
+        if(!head) return prev;
+        ListNode* nxt = head->next;
+        head->next = prev;
+        return  reverseList(nxt, head);
+    }
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        l1 = reverseList(l1);
+        l2 = reverseList(l2);
+        long long a=0,b=0;
+        while(l1){
+            a = a*10 + l1->val;
+            l1 = l1->next;
+        }
+        while(l2){
+            b = b*10 + l2->val;
+            l2 = l2->next;
+        }
+        long long c = a+b;
+        if(c == 0) return new ListNode(0);
+        ListNode* res = new ListNode(0);
+        ListNode* d = res;
+
+        while(c){
+            int x = c % 10;
+            ListNode* newN = new ListNode(x);
+            res->next = newN;
+            res = res->next;
+            c = c/10;
+        }
+        return d->next;
+    }
+};
+```
+
+**Method 2**
+
+```
+public:
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    int c = 0;
+    ListNode newHead(0);
+    ListNode *t = &newHead;
+    while(c || l1 || l2) {
+        c += (l1? l1->val : 0) + (l2? l2->val : 0);
+        t->next = new ListNode(c%10);
+        t = t->next;
+        c /= 10;
+        if(l1) l1 = l1->next;
+        if(l2) l2 = l2->next;
+    }
+    return newHead.next;
+}
+```
+
