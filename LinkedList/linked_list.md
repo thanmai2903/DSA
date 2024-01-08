@@ -27,15 +27,6 @@ public:
 
 ### Recursive Method
 
-**Explanation**:-
-We will create 2 pointer's fast & slow
-
-Fast pointer will move at the speed of 2X
-
-Slow pointer will move at the speed of 1X
-
-If fast pointer reaches null or fast.next is null we will return our slow pointer which mean's our slow pointer is pointing at mid of linked list
-
 ```
 class Solution {
 public:
@@ -47,6 +38,8 @@ public:
     }
 };
 ```
+
+---
 
 2. [Middle of Linked List](https://leetcode.com/problems/middle-of-the-linked-list/)
 
@@ -539,4 +532,3 @@ ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
     return newHead.next;
 }
 ```
-
