@@ -145,6 +145,45 @@ public:
         }
         return true;
     }
+    // Helper function to check if a node has no children
+    bool hasNoChildren(TrieNode* node) {
+        return node->children.empty();
+    }
+
+    // Recursive function to delete a word from the trie
+    bool deleteWordHelper(TrieNode* node, string word, int depth) {
+        if (depth == word.length()) {
+            if (!node->isEnd) {
+                // Word not found
+                return false;
+            }
+            node->isEnd = false; // Mark as not end of word
+            return hasNoChildren(node); // Check if the current node has no children
+        }
+
+        char ch = word[depth];
+        if (node->children.find(ch) == node->children.end()) {
+            // Word not found
+            return false;
+        }
+
+        bool shouldDeleteNode = deleteWordHelper(node->children[ch], word, depth + 1);
+
+        if (shouldDeleteNode) {
+            // Remove the child node from the map and delete it
+            node->children.erase(ch);
+            delete node->children[ch];
+            // Check if the current node is not the end of another word and has no children
+            return !node->isEnd && hasNoChildren(node);
+        }
+
+        return false;
+    }
+
+    // Public function to delete a word from the trie
+    void deleteWord(string word) {
+        deleteWordHelper(root, word, 0);
+    }
 };
 
 int main() {
