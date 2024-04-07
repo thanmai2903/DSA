@@ -205,3 +205,6 @@ public:
     }
 };
 ```
+
+## Important Articles
+[https://leetcode.com/problems/valid-parenthesis-string/solutions/543521/java-count-open-parenthesis-o-n-time-o-1-space-picture-explain/?envType=daily-question&envId=2024-04-07](https://leetcode.com/problems/valid-parenthesis-string/solutions/543521/java-count-open-parenthesis-o-n-time-o-1-space-picture-explain/?envType=daily-question&envId=2024-04-07)
