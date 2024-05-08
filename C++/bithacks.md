@@ -143,3 +143,67 @@ int main() {
 -   The XOR operation between a number and its right-shifted version effectively isolates and removes the common bits, leaving only the bits that differ between the two.
 -   Repeating this process eliminates all paired bits, leaving only the single rightmost set bit in res.
 -   The parity of the original number is reflected in the least significant bit of the final res.
+
+## Trick 1 - Even/Odd
+
+-   x & 1 == 0 -> x is even
+-   x & 1 == 1 -> x is odd
+
+## Trick 2 - Power of 2
+
+// x is a power of 2 =. onluy one bit is 1 in it's binary form all other bits are zeros.
+
+-   x & (x-1) == 0 -> x is power of 2 -> doesn't work if x == 0
+
+```cpp
+bool isPowerOf2(int x){
+  return x && !(x & (x-1));
+}
+```
+
+## Trick 3 - kth Bit from the right(kth least significant bit)
+
+1. check if kth bit is set -> x & (1<<k) > 0 => set
+2. toggle kth bit -> x ^ (1 << k)
+3. set kth bit -> x | (1 << k)
+4. clear kth bit -> x & ~(1 << k)
+
+## Trick 4 - Multiply/Divide
+
+1. x << 1 -> x X 2, x << 2 -> x X 4, x << 3 -> x X 8
+2. x >> 1 -> x/2, x >> 2 -> x/4, x >> 3 -> x/8 ....
+
+## Trick 5 - Find x % (2^k)
+
+x & ((1 << k)-1) => x and (2^k - 1)
+
+## Trick 6 - Swap two numbers x and y
+
+1. x = x^y
+2. y = x^y
+3. x = x^y
+
+## Trick 7
+
+1. if no of set bits in A = x
+2. if no of set bits in B = y
+3. no of set bits in A^B = z
+
+-   z is even if x+y is even
+-   z is odd if x+y is odd
+
+## Trick 8
+
+```cpp
+if( x == 10) x = 5
+else if(x == 5) x = 10
+```
+
+**Way another**
+
+-   x = 10 ^ 5 ^ x;
+
+## Trick 9 - Finding no of set bits in anumber x
+
+1. (\_\_builtin_popcount(x) )-> returns no of set bits in x -> x is on int
+2. (\_\_builtin_popcount11(x)) -> returns no of set bits in x -> x is on long long
