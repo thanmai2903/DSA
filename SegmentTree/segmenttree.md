@@ -54,9 +54,18 @@ tree[] = { 183, 82, 101, 48, 34, 43, 58, 35, 13, 19, 15, 31, 12, 33, 25, 18, 17,
 int querySegTree(int treeIndex, int lo, int hi, int i, int j)
 {
     // query for arr[i..j]
+/*
+....l0...hi....
+..j..........i....
+*/
 
     if (lo > j || hi < i)               // segment completely outside range
         return 0;                       // represents a null node
+
+/*
+....l0...hi....
+..i..........j....
+*/
 
     if (i <= lo && j >= hi)             // segment completely inside range
         return tree[treeIndex];
