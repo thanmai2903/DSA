@@ -12,11 +12,13 @@ Given an integer `n`, find the nth Fibonacci number.
 
 ### Transition
 
-\[ F(n) = F(n-1) + F(n-2) \]
+$$
+ F(n) = F(n-1) + F(n-2)
+$$
 
 ### Base Case
 
-\[ F(0) = 0, \quad F(1) = 1 \]
+$$ F(0) = 0, F(1) = 1 $$
 
 ### Final Subproblem
 
@@ -36,15 +38,58 @@ Given coins of different denominations and a total amount, find the minimum numb
 
 ### Transition
 
-\[ dp[i] = \min(dp[i], dp[i - c] + 1) \]
+$$
+dp[i] = min(dp[i], dp[i - c] + 1)
+$$
 
 ### Base Case
 
-\[ dp[0] = 1 \quad (\text{0 coins are needed to make up amount 0}) \]
+$$
+dp[0] = 0 ({0 coins are needed to make up amount 0})
+$$
 
 ### Final Subproblem
 
 `dp[amount]` gives the minimum number of coins needed for the given amount.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int coinChange(vector<int>& coins, int amount) {
+    // Initialize dp array with a large value (amount + 1)
+    vector<int> dp(amount + 1, amount + 1);
+    dp[0] = 0; // Base case
+
+    // Iterate through each amount from 1 to the target amount
+    for (int i = 1; i <= amount; ++i) {
+        // Check each coin
+        for (int coin : coins) {
+            if (i - coin >= 0) {
+                dp[i] = min(dp[i], dp[i - coin] + 1);
+            }
+        }
+    }
+
+    // If dp[amount] is still amount + 1, it means the amount cannot be formed with given coins
+    return dp[amount] > amount ? -1 : dp[amount];
+}
+
+int main() {
+    vector<int> coins = {1, 2, 5};
+    int amount = 11;
+    int result = coinChange(coins, amount);
+    if (result != -1) {
+        cout << "Minimum number of coins needed: " << result << endl;
+    } else {
+        cout << "It's not possible to make up the amount with the given coins." << endl;
+    }
+    return 0;
+}
+
+```
 
 ---
 
@@ -60,15 +105,51 @@ Find the length of the longest subsequence such that all elements of the subsequ
 
 ### Transition
 
-\[ dp[i] = \max(dp[i], dp[j] + 1) \quad \text{if } arr[i] > arr[j] \]
+$$
+dp[i] = \max(dp[i], dp[j] + 1) \quad \text{if } arr[i] > arr[j]
+$$
 
 ### Base Case
 
-\[ dp[i] = 1 \quad (\text{each element is a subsequence of length 1 by itself}) \]
+dp[i] = 1 {each element is a subsequence of length 1 by itself}
 
 ### Final Subproblem
 
 The length of the longest increasing subsequence is the maximum value in `dp`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int lengthOfLIS(vector<int>& nums) {
+    if (nums.empty()) return 0;
+
+    int n = nums.size();
+    vector<int> dp(n, 1); // Initialize dp array with 1
+
+    // Fill dp array based on the state transition
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[i] > nums[j]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+
+    // The length of the longest increasing subsequence is the maximum value in dp array
+    return *max_element(dp.begin(), dp.end());
+}
+
+int main() {
+    vector<int> nums = {10, 9, 2, 5, 3, 7, 101, 18};
+    int result = lengthOfLIS(nums);
+    cout << "Length of the longest increasing subsequence: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -84,16 +165,55 @@ Given a set of items, each with a weight and a value, determine the maximum valu
 
 ### Transition
 
-\[ dp[i][w] = \max(dp[i-1][w], dp[i-1]w - weight[i-1]] + value[i-1]) \]
+$$
+dp[i][w] = max(dp[i-1][w], dp[i-1]w - weight[i-1]] + value[i-1])
+$$
 
 ### Base Case
 
-\[ dp[0][w] = 0 \]
-\[ dp[i][0] = 0 \]
+dp[0][w] = 0
+dp[i][0] = 0
 
 ### Final Subproblem
 
 `dp[n][W]` gives the maximum value for `n` items and capacity `W`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int knapsack(int W, vector<int>& weights, vector<int>& values, int n) {
+    vector<vector<int>> dp(n + 1, vector<int>(W + 1, 0));
+
+    // Fill the dp array according to the state transition
+    for (int i = 1; i <= n; ++i) {
+        for (int w = 1; w <= W; ++w) {
+            if (weights[i-1] <= w) {
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w - weights[i-1]] + values[i-1]);
+            } else {
+                dp[i][w] = dp[i-1][w];
+            }
+        }
+    }
+
+    // The maximum value is in dp[n][W]
+    return dp[n][W];
+}
+
+int main() {
+    int W = 50; // Capacity of the knapsack
+    vector<int> weights = {10, 20, 30}; // Weights of the items
+    vector<int> values = {60, 100, 120}; // Values of the items
+    int n = weights.size(); // Number of items
+
+    int max_value = knapsack(W, weights, values, n);
+    cout << "Maximum value in the knapsack: " << max_value << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -109,17 +229,72 @@ Given two strings, find the minimum number of operations (insertions, deletions,
 
 ### Transition
 
-\[ dp[i][j] = \min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1 \quad \text{if } s1[i-1] \neq s2[j-1] \]
-\[ dp[i][j] = dp[i-1][j-1] \quad \text{if } s1[i-1] == s2[j-1] \]
+$$
+dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1 \quad \text{if } s1[i-1] != s2[j-1]
+$$
+
+$$
+dp[i][j] = dp[i-1][j-1] \quad \text{if } s1[i-1] == s2[j-1]
+$$
 
 ### Base Case
 
-\[ dp[i][0] = i \]
-\[ dp[0][j] = j \]
+$$
+dp[i][0] = i
+$$
+
+$$
+dp[0][j] = j
+$$
 
 ### Final Subproblem
 
 `dp[m][n]` gives the edit distance between strings `s1` of length `m` and `s2` of length `n`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int minDistance(string s1, string s2) {
+    int m = s1.size();
+    int n = s2.size();
+
+    // Create a dp table to store results of subproblems
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+
+    // Initialize base cases
+    for (int i = 0; i <= m; ++i) {
+        dp[i][0] = i; // Deleting all characters from s1 to match empty s2
+    }
+    for (int j = 0; j <= n; ++j) {
+        dp[0][j] = j; // Inserting all characters into empty s1 to match s2
+    }
+
+    // Fill dp table according to state transition
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[i][j] = dp[i-1][j-1]; // Characters match, no new operation
+            } else {
+                dp[i][j] = min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]}) + 1; // Minimum of insert, delete, substitute
+            }
+        }
+    }
+
+    // The answer is in dp[m][n]
+    return dp[m][n];
+}
+
+int main() {
+    string s1 = "intention";
+    string s2 = "execution";
+    int result = minDistance(s1, s2);
+    cout << "Minimum edit distance: " << result << endl;
+    return 0;
+}
+```
 
 ---
 
@@ -135,15 +310,49 @@ Find the maximum sum of a contiguous subarray within a given one-dimensional arr
 
 ### Transition
 
-\[ dp[i] = \max(arr[i], dp[i-1] + arr[i]) \]
+$$
+dp[i] = \max(arr[i], dp[i-1] + arr[i])
+$$
 
 ### Base Case
 
-\[ dp[0] = arr[0] \]
+$$
+dp[0] = arr[0]
+$$
 
 ### Final Subproblem
 
 The maximum subarray sum is the maximum value in the `dp` array.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int maxSubArray(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+
+    vector<int> dp(n);
+    dp[0] = nums[0];
+    int max_sum = dp[0];
+
+    for (int i = 1; i < n; ++i) {
+        dp[i] = max(nums[i], dp[i-1] + nums[i]);
+        max_sum = max(max_sum, dp[i]);
+    }
+
+    return max_sum;
+}
+
+int main() {
+    vector<int> nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    int result = maxSubArray(nums);
+    cout << "Maximum subarray sum: " << result << endl;
+    return 0;
+}
+```
 
 ---
 
@@ -159,17 +368,63 @@ Given two sequences, find the length of their longest common subsequence.
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j-1] + 1 \quad \text{if } s1[i-1] == s2[j-1] \]
-\[ dp[i][j] = \max(dp[i-1][j], dp[i][j-1]) \quad \text{if } s1[i-1] \neq s2[j-1] \]
+## Transition
+
+$$
+dp[i][j] = dp[i-1][j-1] + 1 \quad \text{if } s1[i-1] == s2[j-1]
+$$
+
+$$
+dp[i][j] = \max(dp[i-1][j], dp[i][j-1]) \quad \text{if } s1[i-1] \neq s2[j-1]
+$$
 
 ### Base Case
 
-\[ dp[0][j] = 0 \]
-\[ dp[i][0] = 0 \]
+$$
+dp[0][j] = 0 ;
+dp[i][0] = 0
+$$
 
 ### Final Subproblem
 
 `dp[m][n]` gives the length of the LCS of `s1` of length `m` and `s2` of length `n`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int longestCommonSubsequence(string s1, string s2) {
+    int m = s1.size();
+    int n = s2.size();
+
+    // Create a dp table with dimensions (m+1) x (n+1) initialized to 0
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+
+    // Fill the dp table according to the state transition
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[i][j] = dp[i-1][j-1] + 1;
+            } else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    }
+
+    // The answer is in dp[m][n]
+    return dp[m][n];
+}
+
+int main() {
+    string s1 = "abcde";
+    string s2 = "ace";
+    int result = longestCommonSubsequence(s1, s2);
+    cout << "Length of the longest common subsequence: " << result << endl;
+    return 0;
+}
+```
 
 ---
 
@@ -185,17 +440,77 @@ Given a `m x n` grid filled with non-negative numbers, find a path from the top 
 
 ### Transition
 
-\[ dp[i][j] = grid[i][j] + \min(dp[i-1][j], dp[i][j-1]) \]
+$$
+ dp[i][j] = grid[i][j] + \min(dp[i-1][j], dp[i][j-1])
+$$
 
 ### Base Case
 
-\[ dp[0][0] = grid[0][0] \]
-\[ dp[i][0] = dp[i-1][0] + grid[i][0] \]
-\[ dp[0][j] = dp[0][j-1] + grid[0][j] \]
+$$
+ dp[0][0] = grid[0][0]
+$$
+
+$$
+dp[i][0] = dp[i-1][0] + grid[i][0]
+$$
+
+$$
+dp[0][j] = dp[0][j-1] + grid[0][j]
+$$
 
 ### Final Subproblem
 
 `dp[m-1][n-1]` gives the minimum path sum to reach the bottom right corner.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int minPathSum(vector<vector<int>>& grid) {
+    int m = grid.size();
+    int n = grid[0].size();
+
+    // Create a dp table with the same dimensions as grid
+    vector<vector<int>> dp(m, vector<int>(n, 0));
+
+    // Base case
+    dp[0][0] = grid[0][0];
+
+    // Initialize the first column
+    for (int i = 1; i < m; ++i) {
+        dp[i][0] = dp[i-1][0] + grid[i][0];
+    }
+
+    // Initialize the first row
+    for (int j = 1; j < n; ++j) {
+        dp[0][j] = dp[0][j-1] + grid[0][j];
+    }
+
+    // Fill the dp table
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+
+    // The answer is in the bottom-right cell of the dp table
+    return dp[m-1][n-1];
+}
+
+int main() {
+    vector<vector<int>> grid = {
+        {1, 3, 1},
+        {1, 5, 1},
+        {4, 2, 1}
+    };
+    int result = minPathSum(grid);
+    cout << "Minimum path sum: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -211,16 +526,54 @@ Given a list of non-negative integers representing the amount of money of each h
 
 ### Transition
 
-\[ dp[i] = \max(dp[i-1], dp[i-2] + nums[i]) \]
+$$
+ dp[i] = \max(dp[i-1], dp[i-2] + nums[i])
+$$
 
 ### Base Case
 
-\[ dp[0] = nums[0] \]
-\[ dp[1] = \max(nums[0], nums[1]) \]
+$$
+dp[0] = nums[0]
+$$
+
+$$
+dp[1] = \max(nums[0], nums[1])
+$$
 
 ### Final Subproblem
 
 The maximum amount of money that can be robbed from all houses is `dp[n-1]`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int rob(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+    if (n == 1) return nums[0];
+
+    vector<int> dp(n);
+    dp[0] = nums[0];
+    dp[1] = max(nums[0], nums[1]);
+
+    for (int i = 2; i < n; ++i) {
+        dp[i] = max(dp[i-1], dp[i-2] + nums[i]);
+    }
+
+    return dp[n-1];
+}
+
+int main() {
+    vector<int> nums = {2, 7, 9, 3, 1};
+    int result = rob(nums);
+    cout << "Maximum amount of money that can be robbed: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -236,16 +589,47 @@ You are climbing a staircase. It takes `n` steps to reach the top. Each time you
 
 ### Transition
 
-\[ dp[i] = dp[i-1] + dp[i-2] \]
+$$
+dp[i] = dp[i-1] + dp[i-2]
+$$
 
 ### Base Case
 
-\[ dp[0] = 1 \]
-\[ dp[1] = 1 \]
+$$ dp[0] = 1 $$
+$$ dp[1] = 1 $$
 
 ### Final Subproblem
 
 `dp[n]` gives the number of distinct ways to reach the top.
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int climbStairs(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+
+    vector<int> dp(n + 1);
+    dp[0] = 1;
+    dp[1] = 1;
+
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+
+    return dp[n];
+}
+
+int main() {
+    int n = 5; // Example input
+    int result = climbStairs(n);
+    cout << "Number of distinct ways to climb to the top: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -261,16 +645,59 @@ Given a string, find the length of the longest subsequence which is a palindrome
 
 ### Transition
 
-\[ dp[i][j] = dp[i+1][j-1] + 2 \quad \text{if } s[i] == s[j] \]
-\[ dp[i][j] = \max(dp[i+1][j], dp[i][j-1]) \quad \text{if } s[i] \neq s[j] \]
+$$ dp[i][j] = dp[i+1][j-1] + 2 \quad \text{if } s[i] == s[j] $$
+$$ dp[i][j] = \max(dp[i+1][j], dp[i][j-1]) \quad \text{if } s[i] \neq s[j] $$
 
 ### Base Case
 
-\[ dp[i][i] = 1 \]
+$$ dp[i][i] = 1 $$
 
 ### Final Subproblem
 
 `dp[0][n-1]` gives the length of the longest palindromic subsequence in the string `s`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int longestPalindromeSubseq(string s) {
+    int n = s.size();
+    if (n == 0) return 0;
+
+    // Create a dp table with dimensions (n) x (n)
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+
+    // Base case: single letters are palindromes of length 1
+    for (int i = 0; i < n; ++i) {
+        dp[i][i] = 1;
+    }
+
+    // Fill the dp table
+    for (int len = 2; len <= n; ++len) { // len is the length of the substring
+        for (int i = 0; i <= n - len; ++i) {
+            int j = i + len - 1; // endpoint of the substring
+            if (s[i] == s[j]) {
+                dp[i][j] = dp[i+1][j-1] + 2;
+            } else {
+                dp[i][j] = max(dp[i+1][j], dp[i][j-1]);
+            }
+        }
+    }
+
+    // The result is in dp[0][n-1]
+    return dp[0][n-1];
+}
+
+int main() {
+    string s = "bbbab";
+    int result = longestPalindromeSubseq(s);
+    cout << "Length of the longest palindromic subsequence: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -286,15 +713,56 @@ Given a sequence of matrices, find the most efficient way to multiply these matr
 
 ### Transition
 
-\[ dp[i][j] = \min\_{i \leq k < j} (dp[i][k] + dp[k+1][j] + cost_of_multiplication(M[i...k], M[k+1...j])) \]
+$$ dp[i][j] = \min\_{i \leq k < j} (dp[i][k] + dp[k+1][j] + cost_of_multiplication(M[i...k], M[k+1...j])) $$
 
 ### Base Case
 
-\[ dp[i][i] = 0 \]
+$$ dp[i][i] = 0 $$
 
 ### Final Subproblem
 
 `dp[1][n-1]` gives the minimum number of multiplications needed to multiply matrices from 1 to `n`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+int matrixChainOrder(vector<int>& p) {
+    int n = p.size() - 1;
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+
+    // dp[i][i] is 0 for all i
+    for (int i = 1; i <= n; ++i) {
+        dp[i][i] = 0;
+    }
+
+    // L is the chain length.
+    for (int L = 2; L <= n; ++L) {
+        for (int i = 1; i <= n - L + 1; ++i) {
+            int j = i + L - 1;
+            dp[i][j] = INT_MAX;
+            for (int k = i; k < j; ++k) {
+                int q = dp[i][k] + dp[k+1][j] + p[i-1] * p[k] * p[j];
+                if (q < dp[i][j]) {
+                    dp[i][j] = q;
+                }
+            }
+        }
+    }
+
+    return dp[1][n];
+}
+
+int main() {
+    vector<int> p = {1, 2, 3, 4};
+    int result = matrixChainOrder(p);
+    cout << "Minimum number of multiplications is: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -310,16 +778,71 @@ Given a set of positive integers, determine if it can be partitioned into two su
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j] \quad \text{or} \quad dp[i-1]j - nums[i-1]] \]
+$$ dp[i][j] = dp[i-1][j] \quad \text{or} \quad dp[i-1]j - nums[i-1]] $$
 
 ### Base Case
 
-\[ dp[i][0] = true \]
-\[ dp[0][j] = false \quad \text{for } j > 0 \]
+$$ dp[i][0] = true $$
+$$ dp[0][j] = false \quad \text{for } j > 0 $$
 
 ### Final Subproblem
 
 Determine if `dp[n][target]` is `true`, where `target` is half the sum of the set (only if the sum is even).
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+bool canPartition(vector<int>& nums) {
+    int sum = 0;
+    for (int num : nums) {
+        sum += num;
+    }
+
+    // If the total sum is odd, we cannot partition it into two equal subsets
+    if (sum % 2 != 0) {
+        return false;
+    }
+
+    int target = sum / 2;
+    int n = nums.size();
+
+    // Create a dp array with dimensions (n+1) x (target+1)
+    vector<vector<bool>> dp(n + 1, vector<bool>(target + 1, false));
+
+    // Initialize base cases
+    for (int i = 0; i <= n; ++i) {
+        dp[i][0] = true;
+    }
+
+    // Fill the dp table
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= target; ++j) {
+            if (j >= nums[i-1]) {
+                dp[i][j] = dp[i-1][j] || dp[i-1][j - nums[i-1]];
+            } else {
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+    }
+
+    // The answer is whether we can partition into subsets with sum equal to target
+    return dp[n][target];
+}
+
+int main() {
+    vector<int> nums = {1, 5, 11, 5};
+    bool result = canPartition(nums);
+    if (result) {
+        cout << "The set can be partitioned into two subsets with equal sum." << endl;
+    } else {
+        cout << "The set cannot be partitioned into two subsets with equal sum." << endl;
+    }
+    return 0;
+}
+
+```
 
 ---
 
@@ -333,20 +856,76 @@ Given an input string `s` and a pattern `p`, implement wildcard pattern matching
 
 `dp[i][j]` represents whether the first `i` characters in the string `s` match the first `j` characters of the pattern `p`.
 
-### Transition
+### transition
 
-\[ dp[i][j] = dp[i-1][j-1] \quad \text{if } s[i-1] == p[j-1] \text{ or } p[j-1] == '?' \]
-\[ dp[i][j] = dp[i][j-1] \quad \text{or} \quad dp[i-1][j] \quad \text{if } p[j-1] == 'star' \]
+$$
+dp[i][j] = dp[i-1][j-1] \quad \text{if } s[i-1] == p[j-1] \text{ or } p[j-1] == '?'
+$$
 
-### Base Case
+$$
+dp[i][j] = dp[i][j-1] \quad \text{or} \quad dp[i-1][j] \quad \text{if } p[j-1] == '*'
+$$
 
-\[ dp[0][0] = true \]
-\[ dp[i][0] = false \quad \text{for } i > 0 \]
-\[ dp[0][j] = dp[0][j-1] \quad \text{if } p[j-1] == 'star' \]
+## Base Case
 
-### Final Subproblem
+$$
+dp[0][0] = true
+$$
+
+$$
+dp[i][0] = false \quad \text{for } i > 0
+$$
+
+$$
+dp[0][j] = dp[0][j-1] \quad \text{if } p[j-1] == '*'
+$$
+
+## Final Subproblem
 
 `dp[m][n]` gives whether the entire string `s` matches the pattern `p`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+bool isMatch(string s, string p) {
+    int m = s.size(), n = p.size();
+    vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+    dp[0][0] = true;
+
+    for (int j = 1; j <= n; ++j) {
+        if (p[j-1] == '*') {
+            dp[0][j] = dp[0][j-1];
+        }
+    }
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (p[j-1] == '*') {
+                dp[i][j] = dp[i][j-1] || dp[i-1][j];
+            } else if (p[j-1] == '?' || s[i-1] == p[j-1]) {
+                dp[i][j] = dp[i-1][j-1];
+            }
+        }
+    }
+
+    return dp[m][n];
+}
+
+int main() {
+    string s = "adceb";
+    string p = "*a*b";
+    bool result = isMatch(s, p);
+    if (result) {
+        cout << "The string matches the pattern." << endl;
+    } else {
+        cout << "The string does not match the pattern." << endl;
+    }
+    return 0;
+}
+```
 
 ---
 
@@ -362,15 +941,54 @@ Given a string `s` and a dictionary of words `dict`, determine if `s` can be seg
 
 ### Transition
 
-\[ dp[i] = dp[j] \quad \text{if } s[j...i-1] \in dict \]
+$$ dp[i] = dp[j] \quad \text{if } s[j...i-1] \in dict $$
 
 ### Base Case
 
-\[ dp[0] = true \]
+$$ dp[0] = true $$
 
 ### Final Subproblem
 
 `dp[n]` gives whether the entire string `s` can be segmented using dictionary words.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_set>
+using namespace std;
+
+bool wordBreak(string s, vector<string>& wordDict) {
+    unordered_set<string> dict(wordDict.begin(), wordDict.end());
+    int n = s.size();
+    vector<bool> dp(n + 1, false);
+    dp[0] = true;
+
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (dp[j] && dict.find(s.substr(j, i - j)) != dict.end()) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+
+    return dp[n];
+}
+
+int main() {
+    string s = "leetcode";
+    vector<string> wordDict = {"leet", "code"};
+    bool result = wordBreak(s, wordDict);
+    if (result) {
+        cout << "The string can be segmented into dictionary words." << endl;
+    } else {
+        cout << "The string cannot be segmented into dictionary words." << endl;
+    }
+    return 0;
+}
+
+```
 
 ---
 
@@ -386,20 +1004,53 @@ There are `n` houses in a row. Each house can be painted with one of three color
 
 ### Transition
 
-\[ dp[i][0] = cost[i][0] + \min(dp[i-1][1], dp[i-1][2]) \]
-\[ dp[i][1] = cost[i][1] + \min(dp[i-1][0], dp[i-1][2]) \]
-\[ dp[i][2] = cost[i][2] + \min(dp[i-1][0], dp[i-1][1]) \]
+$$ dp[i][0] = cost[i][0] + \min(dp[i-1][1], dp[i-1][2]) $$
+$$ dp[i][1] = cost[i][1] + \min(dp[i-1][0], dp[i-1][2]) $$
+$$ dp[i][2] = cost[i][2] + \min(dp[i-1][0], dp[i-1][1]) $$
 
 ### Base Case
 
-\[ dp[0][0] = cost[0][0] \]
-\[ dp[0][1] = cost[0][1] \]
-\[ dp[0][2] = cost[0][2] \]
+$$ dp[0][0] = cost[0][0] $$
+$$ dp[0][1] = cost[0][1] $$
+$$ dp[0][2] = cost[0][2] $$
 
 ### Final Subproblem
 
 The minimum cost to paint all houses is:
-\[ \min(dp[n-1][0], dp[n-1][1], dp[n-1][2]) \]
+$$ \min(dp[n-1][0], dp[n-1][1], dp[n-1][2]) $$
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int minCost(vector<vector<int>>& costs) {
+    if (costs.empty()) return 0;
+    int n = costs.size();
+    vector<vector<int>> dp(n, vector<int>(3, 0));
+
+    dp[0][0] = costs[0][0];
+    dp[0][1] = costs[0][1];
+    dp[0][2] = costs[0][2];
+
+    for (int i = 1; i < n; ++i) {
+        dp[i][0] = costs[i][0] + min(dp[i-1][1], dp[i-1][2]);
+        dp[i][1] = costs[i][1] + min(dp[i-1][0], dp[i-1][2]);
+        dp[i][2] = costs[i][2] + min(dp[i-1][0], dp[i-1][1]);
+    }
+
+    return min({dp[n-1][0], dp[n-1][1], dp[n-1][2]});
+}
+
+int main() {
+    vector<vector<int>> costs = {{17, 2, 17}, {16, 16, 5}, {14, 3, 19}};
+    int result = minCost(costs);
+    cout << "The minimum cost to paint all houses is: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -415,16 +1066,45 @@ Given a string `s`, partition `s` such that every substring of the partition is 
 
 ### Transition
 
-\[ dp[i] = 0 \quad \text{if } s[0...i] \text{ is a palindrome} \]
-\[ dp[i] = \min(dp[i], dp[j-1] + 1) \quad \text{if } s[j...i] \text{ is a palindrome} \]
+$$ dp[i] = 0 \quad \text{if } s[0...i] \text{ is a palindrome} $$
+
+$$
+ dp[i] = \min(dp[i], dp[j-1] + 1) \quad \text{if } s[j...i] \text{ is a palindrome}
+$$
 
 ### Base Case
 
-\[ dp[i] = 0 \quad \text{if } s[0...i] \text{ is a palindrome} \]
+$$ dp[i] = 0 \quad \text{if } s[0...i] \text{ is a palindrome} $$
 
 ### Final Subproblem
 
 `dp[n-1]` gives the minimum number of cuts needed for the entire string `s`.
+
+```cpp
+class Solution {
+public:
+    int minCut(string s) {
+        //dp[i] -> Min cuts of s in [0..i] such that it is a palindrome.
+        int n = size(s);
+        vector<vector<bool>> isPalin(n, vector<bool> (n,false));
+        vector<int>dp(n, 0);
+
+        //pre-compute isPalin
+        for(int i=0; i<n; ++i){
+            dp[i] = i;//max cuts is it's length
+            for(int j=0; j<=i; ++j){
+                //j...i is palindrome if s[i] == s[j] and (len == 1/2 or [j+1...i-1] inner substring is palindrome)
+                if(s[i] == s[j] && (i-j<=1 || isPalin[j+1][i-1])){
+                    isPalin[j][i] = true;
+                    dp[i] = (j == 0) ? 0 : min(dp[i], dp[j-1]+1);
+                }
+            }
+        }
+
+        return dp[n-1];
+    }
+};
+```
 
 ---
 
@@ -440,15 +1120,65 @@ Given `n` jobs, each represented by start time, end time, and profit, find the m
 
 ### Transition
 
-\[ dp[i] = \max(dp[i-1], profit[i] + dp[last\_non\_conflicting\_job]) \]
+$$ dp[i] = \max(dp[i-1], profit[i] + dp[last\_non\_conflicting\_job]) $$
 
 ### Base Case
 
-\[ dp[0] = profit[0] \]
+$$ dp[0] = profit[0] $$
 
 ### Final Subproblem
 
 `dp[n-1]` gives the maximum profit for all jobs.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Job {
+    int start, end, profit;
+};
+
+bool jobComparator(Job s1, Job s2) {
+    return s1.end < s2.end;
+}
+
+int latestNonConflict(vector<Job>& jobs, int i) {
+    for (int j = i - 1; j >= 0; j--) {
+        if (jobs[j].end <= jobs[i].start) {
+            return j;
+        }
+    }
+    return -1;
+}
+
+int maxProfit(vector<Job>& jobs) {
+    sort(jobs.begin(), jobs.end(), jobComparator);
+    int n = jobs.size();
+    vector<int> dp(n);
+    dp[0] = jobs[0].profit;
+
+    for (int i = 1; i < n; i++) {
+        int inclProfit = jobs[i].profit;
+        int l = latestNonConflict(jobs, i);
+        if (l != -1) {
+            inclProfit += dp[l];
+        }
+        dp[i] = max(inclProfit, dp[i-1]);
+    }
+
+    return *max_element(dp.begin(), dp.end());
+}
+
+int main() {
+    vector<Job> jobs = {{1, 2, 50}, {3, 5, 20}, {6, 19, 100}, {2, 100, 200}};
+    int result = maxProfit(jobs);
+    cout << "The maximum profit that can be achieved is: " << result << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -464,15 +1194,71 @@ You have a number of envelopes with width and height given as a pair of integers
 
 ### Transition
 
-\[ dp[i] = \max(dp[i], dp[j] + 1) \quad \text{if } width[i] > width[j] \text{ and } height[i] > height[j] \]
+$$ dp[i] = \max(dp[i], dp[j] + 1) \quad \text{if } width[i] > width[j] \text{ and } height[i] > height[j] $$
 
 ### Base Case
 
-\[ dp[i] = 1 \]
+$$ dp[i] = 1 $$
 
 ### Final Subproblem
 
 The maximum number of envelopes is the maximum value in `dp`.
+
+```cpp
+//TLE
+class Solution {
+public:
+    static bool comp(const vector<int>& a, const vector<int>& b) {
+        if(a[0] == b[0]) {
+            return a[1] > b[1];
+        }
+        return a[0] < b[0];
+    }
+
+    int maxEnvelopes(vector<vector<int>>& e) {
+        sort(e.begin(), e.end(), comp);
+        int n = e.size();
+        vector<int> dp(n, 1);
+
+        for(int i = 1; i < n; ++i) {
+            for(int j = 0; j < i; ++j) {
+                if(e[i][0] > e[j][0] && e[i][1] > e[j][1]) {
+                    dp[i] = max(dp[i], dp[j] + 1);
+                }
+            }
+        }
+        return *max_element(dp.begin(), dp.end());
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    static bool comp(const vector<int>& a, const vector<int>& b) {
+        if(a[0] == b[0]) {
+            return a[1] > b[1];
+        }
+        return a[0] < b[0];
+    }
+
+    int maxEnvelopes(vector<vector<int>>& e) {
+        sort(e.begin(), e.end(), comp);
+        int n = e.size();
+        vector<int> lis;
+
+        for(int i = 0; i < n; ++i) {
+            auto it = lower_bound(lis.begin(), lis.end(), e[i][1]);
+            if(it == lis.end()) {
+                lis.push_back(e[i][1]);
+            }else{
+                *it = e[i][1];
+            }
+        }
+        return lis.size();
+    }
+};
+```
 
 ---
 
@@ -488,16 +1274,93 @@ You are given `K` eggs and you have access to a building with `N` floors. Your g
 
 ### Transition
 
-\[ dp[K][N] = 1 + \min\_{1 \leq i \leq N} \max(dp[K-1][i-1], dp[K][N-i]) \]
+$$ dp[K][N] = 1 + \min\_{1 \leq i \leq N} \max(dp[K-1][i-1], dp[K][N-i]) $$
 
 ### Base Case
 
-\[ dp[1][N] = N \]
-\[ dp[K][0] = 0 \]
+$$ dp[1][N] = N $$
+$$ dp[K][0] = 0 $$
 
 ### Final Subproblem
 
 `dp[K][N]` gives the minimum number of attempts needed with `K` eggs and `N` floors.
+
+```cpp
+//TLE
+class Solution {
+public:
+    int superEggDrop(int K, int N) {
+        vector<vector<int>> dp(K + 1, vector<int>(N + 1, 0));
+
+        // Base case
+        //if one egg => we have to try all floors
+        for(int i = 1; i <= N; ++i) {
+            dp[1][i] = i;
+        }
+        //if only one floor=> ans is 1
+        //if no floors => ans is 0
+        for(int i=1; i<=K; ++i){
+            dp[i][1] = 1;
+            dp[i][0] = 0;
+        }
+
+        // Fill the dp table
+        for(int k = 2; k <= K; ++k) {
+            for(int n = 2; n <= N; ++n) {
+                dp[k][n] = INT_MAX;
+                for(int x = 1; x <= n; ++x) {
+                    int worst = 1 + max(dp[k-1][x-1], dp[k][n-x]);
+                    dp[k][n] = min(dp[k][n], worst);
+                }
+            }
+        }
+
+        return dp[K][N];
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    int superEggDrop(int K, int N) {
+        vector<vector<int>> dp(K + 1, vector<int>(N + 1, 0));
+
+        // Base case: one egg
+        for(int i = 1; i <= N; ++i) {
+            dp[1][i] = i;
+        }
+
+        // Base case: zero floors
+        for(int k = 1; k <= K; ++k) {
+            dp[k][0] = 0;
+            dp[k][1] = 1;  // one floor
+        }
+
+        // Fill the dp table
+        for(int k = 2; k <= K; ++k) {
+            for(int n = 2; n <= N; ++n) {
+                dp[k][n] = INT_MAX;
+                int low = 1, high = n;
+                while(low <= high) {
+                    int mid = (low + high) / 2;
+                    int break_case = dp[k - 1][mid - 1];
+                    int not_break_case = dp[k][n - mid];
+                    int worst = 1 + max(break_case, not_break_case);
+                    if(break_case > not_break_case) {
+                        high = mid - 1;
+                    }else{
+                        low = mid + 1;
+                    }
+                    dp[k][n] = min(dp[k][n], worst);
+                }
+            }
+        }
+
+        return dp[K][N];
+    }
+};
+```
 
 ---
 
