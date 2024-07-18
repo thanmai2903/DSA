@@ -9,11 +9,9 @@
     $$
     dp[i] = dp[i-1] + dp[i-2] + dp[i-3] + dp[i-4] + dp[i-5] + dp[i-6]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 1 \quad \text{(one way to get sum 0 - by not rolling)}
-    $$
     $$
 -   **Final Subproblem**: `dp[n]` gives the number of ways to get the sum `n`.
 
@@ -26,11 +24,9 @@
     $$
     dp[i] = \min(dp[i], dp[i-c] + 1)
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 0 \quad \text{(zero coins are needed to make sum 0)}
-    $$
     $$
 -   **Final Subproblem**: `dp[x]` gives the minimum number of coins to make sum `x`.
 
@@ -43,11 +39,9 @@
     $$
     dp[i] += dp[i-c]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 1 \quad \text{(one way to make sum 0 - by not using any coins)}
-    $$
     $$
 -   **Final Subproblem**: `dp[x]` gives the number of ways to make the sum `x`.
 
@@ -60,11 +54,9 @@
     $$
     dp[i] += dp[i-c]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 1 \quad \text{(one way to make sum 0 - by not using any coins)}
-    $$
     $$
 -   **Final Subproblem**: `dp[x]` gives the number of ways to make the sum `x`.
 
@@ -77,11 +69,9 @@
     $$
     dp[i] = \min(dp[i], dp[i-d] + 1)
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 0 \quad \text{(zero steps needed to reduce 0 to zero)}
-    $$
     $$
 -   **Final Subproblem**: `dp[n]` gives the minimum number of steps to reduce `n` to zero.
 
@@ -94,11 +84,9 @@
     $$
     dp[i][j] = dp[i-1][j] + dp[i][j-1]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0][0] = 1 \quad \text{(one way to start at the top-left corner)}
-    $$
     $$
 -   **Final Subproblem**: `dp[n-1][n-1]` gives the number of ways to reach the bottom-right corner.
 
@@ -111,11 +99,9 @@
     $$
     dp[i][j] = \max(dp[i-1][j], dp[i-1]j-price[i]] + value[i]) \quad \text{if } j \geq price[i]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0][j] = 0 \quad \text{(zero books have zero value)}
-    $$
     $$
 -   **Final Subproblem**: `dp[n][x]` gives the maximum value of books you can buy with the budget `x`.
 
@@ -128,11 +114,9 @@
     $$
     dp[i][j] = dp[i-1][j-1] + dp[i-1][j] + dp[i-1][j+1]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0][j] = 1 \quad \text{if the first element is } j
-    $$
     $$
 -   **Final Subproblem**: Sum `dp[n-1][j]` for all possible `j`.
 
@@ -145,11 +129,9 @@
     $$
     dp[i] = dp[i-1] + dp[i-2]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 1, \quad dp[1] = 1
-    $$
     $$
 -   **Final Subproblem**: `dp[n]` gives the number of ways to build a tower of height `n`.
 
@@ -164,11 +146,9 @@
         $$
         dp[i][j] = 1 + \min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
         $$
-        $$
 -   **Base Case**:
     $$
     dp[i][0] = i \quad \text{(i deletions)}, \quad dp[0][j] = j \quad \text{(j insertions)}
-    $$
     $$
 -   **Final Subproblem**: `dp[m][n]` gives the minimum edit distance between `s1` and `s2`.
 
@@ -188,7 +168,6 @@
     $$
     dp[i][i] = 0 \quad \text{(a square needs no cuts)}
     $$
-    $$
 -   **Final Subproblem**: `dp[a][b]` gives the minimum cuts for a rectangle of dimensions `a x b`.
 
 ## Problem 12: Two Sets II
@@ -200,13 +179,11 @@
     $$
     dp[i][j] = dp[i-1][j] + dp[i-1][j-i] \quad \text{if } j \geq i
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0][0] = 1 \quad \text{(one way to partition an empty set)}
     $$
-    $$
--   **Final Subproblem**: `dp[n][\text{sum/2}]` gives the number of ways to partition the set if `sum` is even.
+-   **Final Subproblem**: `dp[n][sum/2]` gives the number of ways to partition the set if `sum` is even.
 
 ## Problem 13: Increasing Subsequence
 
@@ -217,11 +194,9 @@
     $$
     dp[i] = \max(dp[i], dp[j] + 1)
     $$
-    $$
 -   **Base Case**:
     $$
     dp[i] = 1 \quad \text{(each element is a subsequence of length 1 by itself)}
-    $$
     $$
 -   **Final Subproblem**: The length of the longest increasing subsequence is the maximum value in `dp`.
 
@@ -234,11 +209,9 @@
     $$
     dp[i] = dp[i] \text{ or } dp[i-num] \quad \text{if } i \geq num
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = true \quad \text{(a sum of 0 is always possible)}
-    $$
     $$
 -   **Final Subproblem**: Find the minimum difference between the two subsets.
 
@@ -251,11 +224,9 @@
     $$
     dp[i] = dp[i // 2] + (i \% 2)
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 0
-    $$
     $$
 -   **Final Subproblem**: `dp[n]` gives the number of bits equal to `1`.
 
@@ -268,11 +239,9 @@
     $$
     dp[i] = dp[i-1] + arr[i-1]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0] = 0
-    $$
     $$
 -   **Final Subproblem**: The sum of subarray `[l, r]` is `dp[r+1] - dp[l]`.
 
@@ -285,11 +254,9 @@
     $$
     dp[i][j] = \min(dp[i][j-1], arr[j])
     $$
-    $$
 -   **Base Case**:
     $$
     dp[i][i] = arr[i]
-    $$
     $$
 -   **Final Subproblem**: `dp[l][r]` gives the minimum value in the subarray `[l, r]`.
 
@@ -305,7 +272,6 @@
     $$
     dp[i][i] = 1
     $$
-    $$
 -   **Final Subproblem**: `dp[0][n-1]` gives the length of the longest palindromic subsequence in `s`.
 
 ## Problem 19: Longest Palindromic Substring
@@ -319,7 +285,6 @@
     $$
     dp[i][i] = true
     $$
-    $$
 -   **Final Subproblem**: Find the longest substring for which `dp[i][j]` is true.
 
 ## Problem 20: Knapsack Problem
@@ -331,11 +296,9 @@
     $$
     dp[i][j] = \max(dp[i-1][j], dp[i-1][j-w] + v) \quad \text{if } j \geq w
     $$
-    $$
 -   **Base Case**:
     $$
     dp[0][j] = 0 \quad \text{for all } j
-    $$
     $$
 -   **Final Subproblem**: `dp[n][W]` gives the maximum value for capacity `W`.
 
@@ -346,13 +309,11 @@
 -   **State**: `dp[i][r]` represents the number of subarrays ending at index `i` with a remainder `r` when divided by `k`.
 -   **Transition**: For each element, update the remainders based on the current sum:
     $$
-    dp[i](r + arr[i]) \% k] += dp[i-1][r]
-    $$
+    dp[i][(r + arr[i]) \% k] += dp[i-1][r]
     $$
 -   **Base Case**:
     $$
     dp[0][0] = 1 \quad \text{(one way to get sum 0)}
-    $$
     $$
 -   **Final Subproblem**: Sum `dp[i][0]` for all `i`.
 
@@ -365,11 +326,9 @@
     $$
     dp[i][d] = \max(dp[i][d], dp[j][d] + 1) \quad \text{where } d = arr[i] - arr[j]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[i][d] = 1 \quad \text{(each element can be a subsequence of length 1)}
-    $$
     $$
 -   **Final Subproblem**: The maximum value in `dp` array.
 
@@ -379,16 +338,18 @@
 
 -   **State**: `dp[i][0]` represents the length of the longest zigzag subsequence ending at index `i` and decreasing, `dp[i][1]` represents it increasing.
 -   **Transition**: For each `j < i`:
+
+        $$
+        dp[i][0] = \max(dp[i][0], dp[j][1] + 1) \quad \text{if } arr[i] < arr[j]
+        $$
+
     $$
-    dp[i][0] = \max(dp[i][0], dp[j][1] + 1) \quad \text{if } arr[i] < arr[j]
+        dp[i][1] = \max(dp[i][1], dp[j][0] + 1) \quad \text{if } arr[i] > arr[j]
     $$
-    $$
-    dp[i][1] = \max(dp[i][1], dp[j][0] + 1) \quad \text{if } arr[i] > arr[j]
-    $$
+
 -   **Base Case**:
     $$
     dp[i][0] = dp[i][1] = 1 \quad \text{(each element can be a subsequence of length 1)}
-    $$
     $$
 -   **Final Subproblem**: The maximum value in `dp` array.
 
@@ -401,11 +362,9 @@
     $$
     dp[i] = \max(dp[i], dp[j] + arr[i]) \quad \text{if } arr[j] < arr[i]
     $$
-    $$
 -   **Base Case**:
     $$
     dp[i] = arr[i]
-    $$
     $$
 -   **Final Subproblem**: The maximum value in `dp` array.
 
@@ -418,11 +377,9 @@
     $$
     dp[i][j] = \min(dp[i][j], dp[i][k] + dp[k+1][j] + cost_of_multiplication(M[i...k], M[k+1...j]))
     $$
-    $$
 -   **Base Case**:
     $$
     dp[i][i] = 0
-    $$
     $$
 -   **Final Subproblem**: `dp[1][n]` gives the minimum number of multiplications for matrices from 1 to `n`.
 
@@ -432,16 +389,21 @@
 
 -   **State**: `dp[i][0]` represents the number of ways to paint the first `i` fences with the `i`-th fence having a different color than the `(i-1)`-th, `dp[i][1]` represents it having the same color.
 -   **Transition**:
+
     $$
     dp[i][0] = (dp[i-1][0] + dp[i-1][1]) \* (k-1)
+
+
     $$
-    $$
+
     dp[i][1] = dp[i-1][0]
+
     $$
+    $$
+
 -   **Base Case**:
     $$
     dp[1][0] = k, \quad dp[1][1] = 0
-    $$
     $$
 -   **Final Subproblem**: The sum of `dp[n][0]` and `dp[n][1]`.
 
@@ -454,11 +416,9 @@
     $$
     dp[i][j][isTrue] = \sum \text{ (count of ways considering the operator and its effect on True/False evaluation)}
     $$
-    $$
 3. **Base Case**:
     $$
     dp[i][i][isTrue] = 1 \quad \text{if the single operand evaluates to isTrue}
-    $$
     $$
 4. **Final Subproblem**: `dp[0][n-1][True]` gives the number of ways to parenthesize the entire expression to evaluate to `True`.
 
@@ -471,10 +431,8 @@
     $$
     dp[i][j] = \min(dp[i][j], dp[i][k-1] + dp[k+1][j] + \text{sum of probabilities from } i \text{ to } j)
     $$
-    $$
 3. **Base Case**:
     $$
     dp[i][i] = \text{probability of } i
-    $$
     $$
 4. **Final Subproblem**: `dp[1][n]` gives the minimum cost of the optimal binary search tree for keys from 1 to `n`.
