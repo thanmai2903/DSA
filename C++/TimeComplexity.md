@@ -98,7 +98,9 @@ for (int i = 1; i <= n; i++) {
 
 To find the total number of operations, we sum the number of inner loop executions:
 
-\[ \sum*{i=1}^{n} \sum*{j=1}^{i} \sum*{k=1}^{j} 1 = \sum*{i=1}^{n} \sum*{j=1}^{i} j = \sum*{i=1}^{n} \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6} \]
+$$
+\sum*{i=1}^{n} \sum*{j=1}^{i} \sum*{k=1}^{j} 1 = \sum*{i=1}^{n} \sum*{j=1}^{i} j = \sum*{i=1}^{n} \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}
+$$
 
 **Time Complexity:** \( O(n^3) \)
 
@@ -119,7 +121,7 @@ for (int i = 1; i <= n; i++) {
 
 To find the total number of operations, we sum the number of inner loop executions:
 
-\[ \sum*{i=1}^{n} (n - i + 1) = \sum*{i=1}^{n} i = \frac{n(n+1)}{2} \]
+$$ \sum*{i=1}^{n} (n - i + 1) = \sum*{i=1}^{n} i = \frac{n(n+1)}{2} $$
 
 **Time Complexity:** \( O(n^2) \)
 
@@ -160,7 +162,7 @@ for (int i = 1; i <= n; i++) {
 
 To find the total number of operations, we sum the number of inner loop executions:
 
-\[ \sum*{i=1}^{n} \frac{n}{i} = n \sum*{i=1}^{n} \frac{1}{i} \]
+$$ \sum*{i=1}^{n} \frac{n}{i} = n \sum*{i=1}^{n} \frac{1}{i} $$
 
 This sum approximates to \( O(n \log n) \).
 
@@ -195,7 +197,7 @@ for (int i = 1; i <= n; i *= 2) {
 
 To find the total number of operations, we sum the number of inner loop executions:
 
-\[ \sum\_{k=0}^{\log_2 n} 2^k \]
+$$ \sum\_{k=0}^{\log_2 n} 2^k $$
 
 This sum evaluates to \( 2^{\log_2 n + 1} - 1 = 2n - 1 \).
 
@@ -226,6 +228,5 @@ This sum evaluates to \( 2^{\log_2 n + 1} - 1 = 2n - 1 \).
     - Multiplicative Dependent Loops: \( O(n \log n) \)
     - Increment by Outer Loop Variable: \( O(n \log n) \)
 
-6. **Logarithmic and Other Patterns:**
-    - Logarithmic Loop: \( O(\log n) \)
-    - Logarithmic Nested Loops: \( O(n) \)
+6. **Logarithmic and Other Patterns:** - Logarithmic Loop: \( O(\log n) \) - Logarithmic Nested Loops: \( O(n) \)
+   $$
