@@ -1376,15 +1376,43 @@ You are given `n` balloons, each with a number on it. You burst the balloons to 
 
 ### Transition
 
-\[ dp[i][j] = \max(dp[i][j], dp[i][k] + dp[k][j] + nums[i-1] _ nums[k] _ nums[j+1]) \]
+$$ dp[i][j] = \max(dp[i][j], dp[i][k] + dp[k][j] + nums[i-1] _ nums[k] _ nums[j+1]) $$
 
 ### Base Case
 
-\[ dp[i][i+1] = 0 \]
+$$ dp[i][i+1] = 0 $$
 
 ### Final Subproblem
 
 `dp[0][n-1]` gives the maximum coins for bursting all balloons.
+
+```cpp
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        //dp[i][j] -> Max coins u can collect by bursting b/w ith and jth balloon
+        //traverse from i+1...j-1 becauz in b/w i and j pos is the state
+        //dp[i][j] = max(dp[i][j],  dp[i][k] + dp[k][j] + nums[i]*nums[k]*nums[j] )
+        //B.C -> dp[i][i+1] = 0;
+        int n = size(nums);
+        //add 1 at begin and end to avoid underflow
+        nums.insert(nums.begin(), 1);
+        nums.push_back(1);
+        vector<vector<int>> dp(n+2, vector<int>(n+2, 0));
+
+        for(int len=2; len<n+2; ++len){
+            for(int i=0; i<n+2-len; ++i){
+                int j = i+len;
+                for(int k=i+1; k<j; ++k){
+                    int temp = dp[i][k] + dp[k][j] + nums[i]*nums[k]*nums[j];
+                    dp[i][j] = max(dp[i][j], temp);
+                }
+            }
+        }
+        return dp[0][n+1];
+    }
+};
+```
 
 ---
 
@@ -1400,17 +1428,44 @@ You are given a grid with `m` rows and `n` columns. You start at the top-left co
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j] + dp[i][j-1] \]
+$$ dp[i][j] = dp[i-1][j] + dp[i][j-1] $$
 
 ### Base Case
 
-\[ dp[0][0] = 1 \]
-\[ dp[i][0] = 1 \]
-\[ dp[0][j] = 1 \]
+$$ dp[0][0] = 1 $$
+$$ dp[i][0] = 1 $$
+$$ dp[0][j] = 1 $$
 
 ### Final Subproblem
 
 `dp[m-1][n-1]` gives the number of unique paths to the bottom-right corner.
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int uniquePaths(int m, int n) {
+    // Create a dp table initialized to 1
+    vector<vector<int>> dp(m, vector<int>(n, 1));
+
+    // Fill the dp table based on the transition formula
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+        }
+    }
+
+    // The answer is in dp[m-1][n-1] (number of unique paths to bottom-right corner)
+    return dp[m - 1][n - 1];
+}
+
+int main() {
+    int m = 3, n = 7;
+    cout << "Number of unique paths: " << uniquePaths(m, n) << endl;
+    return 0;
+}
+```
 
 ---
 
@@ -1426,15 +1481,68 @@ Given a string `s`, find the longest substring that is a palindrome.
 
 ### Transition
 
-\[ dp[i][j] = (s[i] == s[j]) \text{ and } (j - i < 3 \text{ or } dp[i+1][j-1]) \]
+$$ dp[i][j] = (s[i] == s[j]) \text{ and } (j - i < 3 \text{ or } dp[i+1][j-1]) $$
 
 ### Base Case
 
-\[ dp[i][i] = true \]
+$$ dp[i][i] = true $$
 
 ### Final Subproblem
 
 Find the maximum length substring for which `dp[i][j]` is `true`.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+string longestPalindrome(string s) {
+    int n = s.length();
+    if (n == 0) return "";
+
+    // Create a dp table initialized to false
+    vector<vector<bool>> dp(n, vector<bool>(n, false));
+
+    int maxLength = 1; // The maximum length of palindrome found
+    int start = 0; // The starting index of the longest palindromic substring
+
+    // Base case: single letter substrings are palindromes
+    for (int i = 0; i < n; ++i) {
+        dp[i][i] = true;
+    }
+
+    // Base case: two consecutive identical letters are palindromes
+    for (int i = 0; i < n - 1; ++i) {
+        if (s[i] == s[i + 1]) {
+            dp[i][i + 1] = true;
+            start = i;
+            maxLength = 2;
+        }
+    }
+
+    // Fill the dp table for substrings longer than 2 characters
+    for (int len = 3; len <= n; ++len) {
+        for (int i = 0; i <= n - len; ++i) {
+            int j = i + len - 1;
+            if (s[i] == s[j] && dp[i + 1][j - 1]) {
+                dp[i][j] = true;
+                start = i;
+                maxLength = len;
+            }
+        }
+    }
+
+    // The longest palindromic substring is from start to start + maxLength - 1
+    return s.substr(start, maxLength);
+}
+
+int main() {
+    string s = "babad";
+    cout << "Longest palindromic substring: " << longestPalindrome(s) << endl;
+    return 0;
+}
+```
 
 ---
 
@@ -1450,15 +1558,42 @@ You are given coins of different denominations and a total amount of money. Find
 
 ### Transition
 
-\[ dp[i] = dp[i] + dp[i - c] \]
+$$ dp[i] = dp[i] + dp[i - c] $$
 
 ### Base Case
 
-\[ dp[0] = 1 \]
+$$ dp[0] = 1 $$
 
 ### Final Subproblem
 
 `dp[amount]` gives the number of ways to make up the given amount.
+
+```cpp
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        //dp[i][j] -< no of ways to get amount j till index i
+        //dp[i][j] = dp[i-1][j] + dp[i][j-coin]
+
+        //B.C
+        //amount = 0 => one way
+        int n = size(coins);
+        vector<vector<int>> dp(n+1, vector<int>(amount+1, 0));
+        for(int i=0; i<=n; ++i){
+            dp[i][0] = 1;
+        }
+        for(int i=1; i<=n; ++i){
+            for(int j=0; j<=amount; ++j){
+                if(coins[i-1]>j){
+                    dp[i][j] = dp[i-1][j];
+                }
+                else dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]];
+            }
+        }
+        return dp[n][amount];
+    }
+};
+```
 
 ---
 
@@ -1474,17 +1609,66 @@ Given a `m x n` grid filled with non-negative numbers, find a path from top left
 
 ### Transition
 
-\[ dp[i][j] = grid[i][j] + \min(dp[i-1][j], dp[i][j-1]) \]
+$$ dp[i][j] = grid[i][j] + \min(dp[i-1][j], dp[i][j-1]) $$
 
 ### Base Case
 
-\[ dp[0][0] = grid[0][0] \]
-\[ dp[i][0] = dp[i-1][0] + grid[i][0] \]
-\[ dp[0][j] = dp[0][j-1] + grid[0][j] \]
+$$ dp[0][0] = grid[0][0] $$
+$$ dp[i][0] = dp[i-1][0] + grid[i][0] $$
+$$ dp[0][j] = dp[0][j-1] + grid[0][j] $$
 
 ### Final Subproblem
 
 `dp[m-1][n-1]` gives the minimum path sum to the bottom-right corner.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int minPathSum(vector<vector<int>>& grid) {
+    int m = grid.size();
+    int n = grid[0].size();
+
+    // Create a dp table
+    vector<vector<int>> dp(m, vector<int>(n, 0));
+
+    // Base Case
+    dp[0][0] = grid[0][0];
+
+    // Initialize first column of the dp table
+    for (int i = 1; i < m; ++i) {
+        dp[i][0] = dp[i - 1][0] + grid[i][0];
+    }
+
+    // Initialize first row of the dp table
+    for (int j = 1; j < n; ++j) {
+        dp[0][j] = dp[0][j - 1] + grid[0][j];
+    }
+
+    // Fill the dp table
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[i][j] = grid[i][j] + min(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    // The answer is in dp[m-1][n-1] (minimum path sum to bottom-right corner)
+    return dp[m - 1][n - 1];
+}
+
+int main() {
+    vector<vector<int>> grid = {
+        {1, 3, 1},
+        {1, 5, 1},
+        {4, 2, 1}
+    };
+    cout << "Minimum path sum: " << minPathSum(grid) << endl;
+    return 0;
+}
+
+```
 
 ---
 
@@ -1500,16 +1684,59 @@ Given a set of positive integers and a value `sum`, determine if there is a subs
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j] \quad \text{or} \quad dp[i-1]j - nums[i-1]] \]
+$$ dp[i][j] = dp[i-1][j] \quad \text{or} \quad dp[i-1]j - nums[i-1]] $$
 
 ### Base Case
 
-\[ dp[i][0] = true \]
-\[ dp[0][j] = false \quad \text{for } j > 0 \]
+$$ dp[i][0] = true $$
+$$ dp[0][j] = false \quad \text{for } j > 0 $$
 
 ### Final Subproblem
 
 Determine if `dp[n][sum]` is `true`.
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+bool isSubsetSum(vector<int>& nums, int sum) {
+    int n = nums.size();
+
+    // Create a dp table initialized to false
+    vector<vector<bool>> dp(n + 1, vector<bool>(sum + 1, false));
+
+    // Base Case: There is always a subset with sum 0 (the empty subset)
+    for (int i = 0; i <= n; ++i) {
+        dp[i][0] = true;
+    }
+
+    // Fill the dp table
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= sum; ++j) {
+            if (nums[i - 1] > j) {
+                dp[i][j] = dp[i - 1][j];
+            } else {
+                dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i - 1]];
+            }
+        }
+    }
+
+    // The answer is in dp[n][sum] (whether there is a subset with sum equal to `sum`)
+    return dp[n][sum];
+}
+
+int main() {
+    vector<int> nums = {3, 34, 4, 12, 5, 2};
+    int sum = 9;
+    if (isSubsetSum(nums, sum)) {
+        cout << "Found a subset with given sum" << endl;
+    } else {
+        cout << "No subset with given sum" << endl;
+    }
+    return 0;
+}
+```
 
 ---
 
@@ -1525,16 +1752,40 @@ Given an integer array `nums`, find the contiguous subarray within an array (con
 
 ### Transition
 
-\[ dp*max[i] = \max(nums[i], nums[i] * dp*max[i-1], nums[i] * dp*min[i-1]) \]
-\[ dp_min[i] = \min(nums[i], nums[i] * dp*max[i-1], nums[i] * dp_min[i-1]) \]
+$$ dp*max[i] = \max(nums[i], nums[i] * dp*max[i-1], nums[i] * dp*min[i-1]) $$
+$$ dp_min[i] = \min(nums[i], nums[i] * dp*max[i-1], nums[i] * dp_min[i-1]) $$
 
 ### Base Case
 
-\[ dp_max[0] = dp_min[0] = nums[0] \]
+$$ dp_max[0] = dp_min[0] = nums[0] $$
 
 ### Final Subproblem
 
 The maximum product subarray is the maximum value in `dp_max`.
+
+```cpp
+int maxProduct(vector<int>& nums) {
+    if (nums.empty()) return 0;
+
+    int n = nums.size();
+    vector<int> dp_max(n), dp_min(n);
+    dp_max[0] = dp_min[0] = nums[0];
+    int result = nums[0];
+
+    for (int i = 1; i < n; ++i) {
+        if (nums[i] >= 0) {
+            dp_max[i] = max(nums[i], nums[i] * dp_max[i - 1]);
+            dp_min[i] = min(nums[i], nums[i] * dp_min[i - 1]);
+        } else {
+            dp_max[i] = max(nums[i], nums[i] * dp_min[i - 1]);
+            dp_min[i] = min(nums[i], nums[i] * dp_max[i - 1]);
+        }
+        result = max(result, dp_max[i]);
+    }
+
+    return result;
+}
+```
 
 ---
 
@@ -1550,16 +1801,62 @@ Given an input string `s` and a pattern `p`, implement regular expression matchi
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j-1] \quad \text{if } s[i-1] == p[j-1] \text{ or } p[j-1] == '.' \]
-\[ dp[i][j] = dp[i][j-2] \quad \text{or} \quad dp[i-1][j] \quad \text{if } p[j-2] \text{ matches } s[i-1] \text{ or } p[j-2] == '.' \]
+$$ dp[i][j] = dp[i-1][j-1] \quad \text{if } s[i-1] == p[j-1] \text{ or } p[j-1] == '.' $$
+$$ dp[i][j] = dp[i][j-2] \quad \text{or} \quad dp[i-1][j] \quad \text{if } p[j-2] \text{ matches } s[i-1] \text{ or } p[j-2] == '.' $$
 
 ### Base Case
 
-\[ dp[0][0] = true \]
+$$ dp[0][0] = true $$
 
 ### Final Subproblem
 
 `dp[m][n]` gives whether the entire string `s` matches the pattern `p`.
+
+```cpp
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.length();
+        int n = p.length();
+
+        // Create a dp table initialized to false
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+        // Base Case: empty string matches empty pattern
+        dp[0][0] = true;
+
+        // Handle patterns like a*, a*b*, a*b*c* that can match an empty string
+        for (int j = 2; j <= n; ++j) {
+            if (p[j - 1] == '*') {
+                dp[0][j] = dp[0][j - 2];
+            }
+        }
+
+        // Fill the dp table
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (p[j - 1] == '*') {
+                    // Zero occurrence of the character before '*'
+                    dp[i][j] = dp[i][j - 2];
+
+                    // One or more occurrence of the character before '*'
+                    if (p[j - 2] == s[i - 1] || p[j - 2] == '.') {
+                        dp[i][j] = dp[i][j] || dp[i - 1][j];
+                    }
+                } else {
+                    // Match if current characters are the same or pattern has '.'
+                    if (s[i - 1] == p[j - 1] || p[j - 1] == '.') {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    }
+                }
+            }
+        }
+
+        // The answer is whether the entire string matches the entire pattern
+        return dp[m][n];
+    }
+};
+```
 
 ---
 
@@ -1575,16 +1872,56 @@ Given strings `s1`, `s2`, and `s3`, find whether `s3` is formed by an interleavi
 
 ### Transition
 
-\[ dp[i][j] = dp[i-1][j] \quad \text{if } s1[i-1] == s3[i+j-1] \]
-\[ dp[i][j] = dp[i][j-1] \quad \text{if } s2[j-1] == s3[i+j-1] \]
+$$ dp[i][j] = dp[i-1][j] \quad \text{if } s1[i-1] == s3[i+j-1] $$
+$$ dp[i][j] = dp[i][j-1] \quad \text{if } s2[j-1] == s3[i+j-1] $$
 
 ### Base Case
 
-\[ dp[0][0] = true \]
+$$ dp[0][0] = true $$
 
 ### Final Subproblem
 
 `dp[m][n]` gives whether `s3` is an interleaving of `s1` and `s2`.
+
+```cpp
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        int m = s1.length();
+        int n = s2.length();
+
+        // If the total length of s1 and s2 is not equal to the length of s3, return false
+        if (m + n != s3.length()) return false;
+
+        // Create a dp table initialized to false
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+        // Base Case: empty strings interleave to form an empty string
+        dp[0][0] = true;
+
+        // Fill dp table for s1 being empty
+        for (int j = 1; j <= n; ++j) {
+            dp[0][j] = dp[0][j - 1] && (s2[j - 1] == s3[j - 1]);
+        }
+
+        // Fill dp table for s2 being empty
+        for (int i = 1; i <= m; ++i) {
+            dp[i][0] = dp[i - 1][0] && (s1[i - 1] == s3[i - 1]);
+        }
+
+        // Fill the rest of the dp table
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]) ||
+                           (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
+            }
+        }
+
+        // The answer is in dp[m][n], whether s3 can be formed by interleaving s1 and s2
+        return dp[m][n];
+    }
+};
+```
 
 ---
 
@@ -1600,11 +1937,11 @@ Given a string `s1`, we may represent it as a binary tree by partitioning it int
 
 ### Transition
 
-\[ dp[i][j][k] = (dp[i][j][l] \text{ and } dp[i+l][j+l][k-l]) \quad \text{or} \quad (dp[i][j+k-l][l] \text{ and } dp[i+l][j][k-l]) \]
+$$ dp[i][j][k] = (dp[i][j][l] \text{ and } dp[i+l][j+l][k-l]) \quad \text{or} \quad (dp[i][j+k-l][l] \text{ and } dp[i+l][j][k-l]) $$
 
 ### Base Case
 
-\[ dp[i][j][1] = (s1[i] == s2[j]) \]
+$$ dp[i][j][1] = (s1[i] == s2[j]) $$
 
 ### Final Subproblem
 
