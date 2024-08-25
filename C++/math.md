@@ -19,14 +19,14 @@ or ceil(k/y) === k % y == 0 ? k/y : k/y-1;
 1. One methos is to multiply a , b times => O(b) time
 2. Recursion -> O(log(b))
 
-\[
+$$
 \text{power}(a, b) =
 \begin{cases}
 1 & \text{if } b = 0 \\
 \text{power}(a, \frac{b}{2}) \cdot \text{power}(a, \frac{b}{2}) & \text{if } b \text{ is even} \\
 a \cdot \text{power}(a, \frac{b}{2}) \cdot \text{power}(a, \frac{b}{2}) & \text{if } b \text{ is odd}
 \end{cases}
-\]
+$$
 
 -   **Even Case:**
 
@@ -127,3 +127,5 @@ int lcmUsingRepeatedAddition(int a, int b) {
 }
 ```
 
+$$
+$$
