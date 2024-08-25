@@ -1947,6 +1947,72 @@ $$ dp[i][j][1] = (s1[i] == s2[j]) $$
 
 `dp[0][0][n]` gives whether `s1` is a scramble of `s2`.
 
+```cpp   
+bool isScrambleTabulation(string s1, string s2) {
+    int n = s1.size();
+    if (n != s2.size()) return false;
+    if (s1 == s2) return true;
+
+    // 3D DP array to store results of subproblems
+    vector<vector<vector<bool>>> dp(n, vector<vector<bool>>(n, vector<bool>(n + 1, false)));
+
+    // Base case: single characters
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            dp[i][j][1] = (s1[i] == s2[j]);
+        }
+    }
+
+    // Solve for lengths from 2 to n
+    for (int len = 2; len <= n; len++) {
+        for (int i = 0; i <= n - len; i++) {
+            for (int j = 0; j <= n - len; j++) {
+                for (int l = 1; l < len; l++) {
+                    if ((dp[i][j][l] && dp[i + l][j + l][len - l]) ||
+                        (dp[i][j + len - l][l] && dp[i + l][j][len - l])) {
+                        dp[i][j][len] = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return dp[0][0][n];
+}
+
+class Solution {
+public:
+    unordered_map<string, int> mp;
+    bool isScrambleMemoized(string s1, string s2) {
+
+        if(s1 == s2){
+            return true;
+        }
+        if(size(s1) != size(s2)){
+            return false;
+        }
+        int n = size(s1);
+
+        string key = s1+"_"+s2;
+
+        if(mp.count(key)){
+            return mp[key];
+        }
+
+
+        for(int i=1; i<n; ++i){
+            bool swap = isScramble(s1.substr(0,i), s2.substr(n-i, i)) && isScramble(s1.substr(i,n-i), s2.substr(0, n-i)) ;
+            bool unswap = isScramble(s1.substr(0,i), s2.substr(0, i)) && isScramble(s1.substr(i,n-i), s2.substr(i, n-i)) ;
+            if(swap || unswap){
+                return true;
+            }
+        }
+        return mp[key] = false;
+    }
+};
+```
+
 ## Example 31: Word Break II
 
 **Problem**: Given a string `s` and a dictionary of words `dict`, add spaces in `s` to construct a sentence where each word is a valid dictionary word. Return all such possible sentences.
